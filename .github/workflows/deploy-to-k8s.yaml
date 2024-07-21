@@ -50,3 +50,8 @@ jobs:
       run: |
         kubectl set image deployment/wisecow wisecow=${{ secrets.DOCKER_HUB_USERNAME }}/wisecow:${{ github.sha }} -n default
         kubectl rollout status deployment/wisecow -n default --timeout=10m
+
+    - name: Get NodePort Service Details
+      run: |
+        kubectl get svc wisecow -o jsonpath='{.spec.ports[0].nodePort}'
+        kubectl get nodes -o jsonpath='{.items[0].status.addresses[0].address}'
