@@ -34,14 +34,14 @@ jobs:
 
     - name: Install Cert-Manager
       run: |
-        kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.10.0/cert-manager.yaml
-        kubectl apply -f cert-manager.yaml  # Apply Cert-Manager configuration
+        
+        kubectl apply -f cert-manager.yaml
 
     - name: Apply Kubernetes Configurations
       run: |
         kubectl apply -f deployment.yaml
         kubectl apply -f service.yaml
-        kubectl apply -f ingress.yaml      # Apply Ingress configuration
+        kubectl apply -f ingress.yaml
 
     - name: Update Kubernetes Deployment
       run: |
