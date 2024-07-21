@@ -32,16 +32,14 @@ jobs:
       with:
         version: 'latest'
 
-    - name: Install Cert-Manager
+    - name: Apply Kubernetes Secrets
       run: |
-        
-        kubectl apply -f cert-manager.yaml
+        kubectl create secret tls my-tls-secret --cert=tls.crt --key=tls.key || echo "Secret already exists"
 
     - name: Apply Kubernetes Configurations
       run: |
         kubectl apply -f deployment.yaml
         kubectl apply -f service.yaml
-        kubectl apply -f ingress.yaml
 
     - name: Update Kubernetes Deployment
       run: |
