@@ -6,7 +6,7 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: your-email@example.com  # Replace with your email
+    email: snigdhachaudhari1@gmail.com
     privateKeySecretRef:
       name: letsencrypt-prod
     solvers:
@@ -25,6 +25,6 @@ spec:
   issuerRef:
     name: letsencrypt-prod
     kind: ClusterIssuer
-  commonName: your-domain.com  # Replace with your actual domain
+  commonName: wisecow.com  
   dnsNames:
-    - your-domain.com  # Replace with your actual domain
+    - wisecow.com  
