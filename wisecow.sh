@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 
+# Configuration
 SRVPORT=4499
 RSPFILE=response
+TLS_CERT="/etc/tls/tls.crt"
+TLS_KEY="/etc/tls/tls.key"
 
+# Clean up previous response file
 rm -f $RSPFILE
 mkfifo $RSPFILE
 
@@ -17,8 +21,8 @@ handleRequest() {
 	mod=`fortune`
 
 cat <<EOF > $RSPFILE
-HTTP/1.1 200
-
+HTTP/1.1 200 OK
+Content-Type: text/html
 
 <pre>`cowsay $mod`</pre>
 EOF
@@ -26,7 +30,8 @@ EOF
 
 prerequisites() {
 	command -v cowsay >/dev/null 2>&1 &&
-	command -v fortune >/dev/null 2>&1 || 
+	command -v fortune >/dev/null 2>&1 &&
+	command -v openssl >/dev/null 2>&1 || 
 		{ 
 			echo "Install prerequisites."
 			exit 1
@@ -35,10 +40,11 @@ prerequisites() {
 
 main() {
 	prerequisites
-	echo "Wisdom served on port=$SRVPORT..."
+	echo "Wisdom served on port=$SRVPORT with TLS..."
 
 	while [ 1 ]; do
-		cat $RSPFILE | nc -lN $SRVPORT | handleRequest
+		openssl s_server -accept $SRVPORT -cert $TLS_CERT -key $TLS_KEY -www \
+			-quiet -CAfile $TLS_CERT -Verify 1 < $RSPFILE | handleRequest
 		sleep 0.01
 	done
 }
