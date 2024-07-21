@@ -32,6 +32,11 @@ jobs:
       with:
         version: 'latest'
 
+    - name: Decode TLS Secrets
+      run: |
+        echo "${{ secrets.TLS_CERT }}" | base64 -d > tls.crt
+        echo "${{ secrets.TLS_KEY }}" | base64 -d > tls.key
+
     - name: Apply Kubernetes Secrets
       run: |
         kubectl create secret tls my-tls-secret --cert=tls.crt --key=tls.key || echo "Secret already exists"
