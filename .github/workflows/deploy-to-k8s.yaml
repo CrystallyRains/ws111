@@ -1,0 +1,43 @@
+name: Deploy to Kubernetes
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Kind
+      run: |
+        curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.17.0/kind-linux-amd64
+        chmod +x ./kind
+        sudo mv ./kind /usr/local/bin/kind
+
+    - name: Create Kind Cluster
+      run: kind create cluster --name kind
+
+    - name: Set up Kubeconfig
+      run: |
+        mkdir -p $HOME/.kube
+        kind get kubeconfig --name kind > $HOME/.kube/config
+
+    - name: Install kubectl
+      uses: azure/setup-kubectl@v1
+      with:
+        version: 'latest'
+
+    - name: Apply Kubernetes Deployment
+      run: |
+        kubectl apply -f deployment.yaml
+        kubectl apply -f service.yaml
+
+    - name: Update Kubernetes Deployment
+      run: |
+        kubectl set image deployment/wisecow wisecow=${{ secrets.DOCKER_HUB_USERNAME }}/wisecow:${{ github.sha }} -n default
+        kubectl rollout status deployment/wisecow -n default --timeout=10m
