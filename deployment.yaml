@@ -26,4 +26,4 @@ spec:
       volumes:
       - name: tls-certs
         secret:
-          secretName: tls-secret
+          secretName: my-tls-secret  
